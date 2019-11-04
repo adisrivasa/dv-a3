@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+  <head>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.1.4.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.downCount.js') }}"></script>
+  </head>
+
+  <body>
+    <div style = "text-align:center"><b> International Instituite Of Information Technology - BANGALORE </b></div>
+    <div style = "text-align:center"><b> Course : DATA VISUALIZATION </b></div>
+    <div style = "text-align:center"><b> ASSIGNMENT - 3 </b></div>
+    <div style = "text-align:right"><b>Author : SURYA SRIKAR PERURI - IMT2015042 </b></div>
+    <br>
+    <p>This assignment is on information visualization, using D3.js , for performing the following visualizations :&emsp;1. Multivariate data visualization using parallel coordinates.<br>
+&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;2. Hierarchical data visualization using treemap.<br>
+&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp; &emsp; &emsp;&emsp; &emsp;&emsp; &emsp;&emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;3. Network visualization using both node-link diagram and matrix visualization.</p>
+
+    <p>Data Sets available:&emsp;1. Appliances energy prediction data set : Mulitvariate, time-series data&emsp;&emsp; <button onclick = "energyinfovis()"> Select Data Set </button><br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;2. Default of credit card clients data set : Multivariate &emsp;&emsp; <button onclick = "creditinfovis()"> Select Data Set </button><br>
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;3. Census income data set : Multivariate &emsp;&emsp; <button onclick = "creditinfovis()"> Select Data Set </button></p>
+
+<p id = 'VisTypeInfo'; style = 'display:none'>
+  Select type of Visualization &emsp;
+  <td><select id = 'Vistype'; onchange="VisTypeInfofunc()">
+    <option value="PC">Parallel Coordinates</option>
+    <option value="TM">Tree Map</option>
+  </select></td>
+</p>
+
+<p id = 'PCcolumns'; style = 'display:none'>Select the columns for the visualization :
+<input class="form-control col-sm-6" name="pccolumns" type="text" placeholder="Ex:A,C,E,F"><br>
+Colour Based on the column : <input class="form-control col-sm-6" name="pccolorcolumn" type="text" placeholder="Ex:A">
+&emsp;<button onclick = "PCVisualization()"> Visualize </button></p>
+
+<p id = 'TMcolumns'; style = 'display:none'>
+  Value column :<input class="form-control col-sm-6" name="TMvaluecolumn" type="text" placeholder="Ex:A"><br>
+  First level of abstraction based on :<input class="form-control col-sm-6" name="TMcolumn1" type="text" placeholder="Ex:A"><br>
+  Second level of abstraction based on :<input class="form-control col-sm-6" name="TMcolumn2" type="text" placeholder="Ex:A"><br>
+  Filter records based on :<input class="form-control col-sm-6" name="TMcolumnfilter" type="text" placeholder="Ex:A-val">
+  &emsp;<button onclick = "TMVisualization()"> Visualize </button>
+</p>
+
+<p id= 'EnergyInfo'; style = "display:none"><b>Energy Prediction Data Set Attribute Information :</b>
+<br> &emsp;&emsp; date (A): time year-month-day hour:minute:second<br>
+&emsp;&emsp; Appliances (B): energy use in Wh<br>
+&emsp;&emsp; lights (C): energy use of light fixtures in the house in Wh<br>
+&emsp;&emsp; T1 (D): Temperature in kitchen area, in Celsius<br>
+&emsp;&emsp; RH_1 (E): Humidity in kitchen area, in %<br>
+&emsp;&emsp; T2 (F): Temperature in living room area, in Celsius<br>
+&emsp;&emsp; RH_2 (G): Humidity in living room area, in %<br>
+&emsp;&emsp; T3 (H): Temperature in laundry room area<br>
+&emsp;&emsp; RH_3 (I): Humidity in laundry room area, in %<br>
+&emsp;&emsp; T4 (J): Temperature in office room, in Celsius<br>
+&emsp;&emsp; RH_4 (K): Humidity in office room, in %<br>
+&emsp;&emsp; T5 (L): Temperature in bathroom, in Celsius<br>
+&emsp;&emsp; RH_5 (M): Humidity in bathroom, in %<br>
+&emsp;&emsp; T6 (N): Temperature outside the building (north side), in Celsius<br>
+&emsp;&emsp; RH_6 (O): Humidity outside the building (north side), in %<br>
+&emsp;&emsp; T7 (P): Temperature in ironing room , in Celsius<br>
+&emsp;&emsp; RH_7 (Q): Humidity in ironing room, in %<br>
+&emsp;&emsp; T8 (R): Temperature in teenager room 2, in Celsius<br>
+&emsp;&emsp; RH_8 (S): Humidity in teenager room 2, in %<br>
+&emsp;&emsp; T9 (T): Temperature in parents room, in Celsius<br>
+&emsp;&emsp; RH_9 (U): Humidity in parents room, in %<br>
+&emsp;&emsp; T_out (V): Temperature outside from Chievres weather station, in Celsius<br>
+&emsp;&emsp; Press_mm_hg (W): Pressure from Chievres weather station, in mm Hg<br>
+&emsp;&emsp; RH_out (X): Humidity outside from Chievres weather station, in %<br>
+&emsp;&emsp; Windspeed (Y): Wind speed from Chievres weather station, in m/s<br>
+&emsp;&emsp; Visibility (Z): Visibility from Chievres weather station, in km<br>
+&emsp;&emsp; Tdewpoint (AA): Dew point from Chievres weather station, Â°C<br>
+&emsp;&emsp; rv1 (AB): Random variable 1, nondimensional<br>
+&emsp;&emsp; rv2 (AC): Random variable 2, nondimensional</p>
+
+    <p id = "CreditInfo"; style = 'display:none'><b>Credit Data Attribute Information :</b>
+      <br>&emsp;This research employed a binary variable, default payment (Yes = 1, No = 0), as the response variable. This study reviewed the literature and used the following 23 variables as explanatory variables:<br>
+&emsp;&emsp;ID (A): Number <br>
+&emsp;&emsp;LIMIT_BAL (B): Amount of the given credit (NT dollar), it includes both the individual consumer credit and his/her family (supplementary) credit.<br>
+&emsp;&emsp;SEX (C): Gender 1 = male; 2 = female.<br>
+&emsp;&emsp;EDUCATION (D): 1 = graduate school; 2 = university; 3 = high school; 4 = others.<br>
+&emsp;&emsp;MARRIAGE (E): Marital status 1 = married; 2 = single; 3 = others.<br>
+&emsp;&emsp;AGE (F): year.<br>
+&emsp;&emsp;G - L: History of past payment.<br>
+&emsp;&emsp;The measurement scale for the repayment status is: -1 = pay duly; 1 = payment delay for one month; 2 = payment delay for two months; . . .;<br>
+&emsp;&emsp;8 = payment delay for eight months; 9 = payment delay for nine months and above. <br>
+&emsp;&emsp;PAY_0 (G): the repayment status in September, 2005;<br>
+&emsp;&emsp;PAY_2 (H): the repayment status in August, 2005; . . .;<br>
+&emsp;&emsp;PAY_3 (I): the repayment status in July, 2005. <br>
+&emsp;&emsp;PAY_4 (J): the repayment status in June, 2005. <br>
+&emsp;&emsp;PAY_5 (K): the repayment status in May, 2005. <br>
+&emsp;&emsp;PAY_6 (L): the repayment status in April, 2005. <br>
+&emsp;&emsp;M - R: Amount of bill statement (NT dollar).<br>
+&emsp;&emsp;BILL_AMT1 (M): amount of bill statement in September, 2005;<br>
+&emsp;&emsp;BILL_AMT2 (N): amount of bill statement in August, 2005; . . .;<br>
+&emsp;&emsp;BILL_AMT3 (O): amount of bill statement in July, 2005.<br>
+&emsp;&emsp;BILL_AMT4 (P): amount of bill statement in June, 2005.<br>
+&emsp;&emsp;BILL_AMT5 (Q): amount of bill statement in May, 2005.<br>
+&emsp;&emsp;BILL_AMT6 (R): amount of bill statement in April, 2005.<br>
+&emsp;&emsp;S - X: Amount of previous payment (NT dollar).<br>
+&emsp;&emsp;PAY_AMT1 (S): amount paid in September, 2005;<br>
+&emsp;&emsp;PAY_AMT2 (T): amount paid in August, 2005; . . .;<br>
+&emsp;&emsp;PAY_AMT3 (U): amount paid in April, 2005.<br>
+&emsp;&emsp;PAY_AMT4 (V): amount paid in April, 2005.<br>
+&emsp;&emsp;PAY_AMT5 (W): amount paid in April, 2005.<br>
+&emsp;&emsp;PAY_AMT6 (X): amount paid in April, 2005.<br>
+&emsp;&emsp;default payment next month (Y): number <br></p>
+
+    <script type = "text/javascript">
+      var filenum = 0;
+
+      function VisTypeInfofunc() {
+        var selector1 = document.getElementById('Vistype');
+        var type = selector1[selector1.selectedIndex].value;
+        if(type == 'PC') {
+          document.getElementById('PCcolumns').style.display = "block";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+        else if (type == 'TM') {
+          document.getElementById('TMcolumns').style.display = "block";
+          document.getElementById('PCcolumns').style.display = "none";
+        }
+        else {
+          document.getElementById('PCcolumns').style.display = "none";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+      }
+
+      function energyinfovis(){
+        filenum = 1
+        document.getElementById('CreditInfo').style.display = "none";
+        document.getElementById('EnergyInfo').style.display = "block";
+        document.getElementById('VisTypeInfo').style.display = "block";
+        var selector1 = document.getElementById('Vistype');
+        var type = selector1[selector1.selectedIndex].value;
+        if(type == 'PC') {
+          document.getElementById('PCcolumns').style.display = "block";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+        else if(type == 'TM') {
+          document.getElementById('TMcolumns').style.display = "block";
+          document.getElementById('PCcolumns').style.display = "none";
+        }
+        else {
+          document.getElementById('PCcolumns').style.display = "none";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+      }
+
+      function creditinfovis(){
+        filenum = 2;
+        document.getElementById('CreditInfo').style.display = "block";
+        document.getElementById('VisTypeInfo').style.display = "block";
+        document.getElementById('EnergyInfo').style.display = "none";
+        var selector1 = document.getElementById('Vistype');
+        var type = selector1[selector1.selectedIndex].value;
+        if(type == 'PC') {
+          document.getElementById('PCcolumns').style.display = "block";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+        else if(type == 'TM') {
+          document.getElementById('TMcolumns').style.display = "block";
+          document.getElementById('PCcolumns').style.display = "none";
+        }
+        else {
+          document.getElementById('PCcolumns').style.display = "none";
+          document.getElementById('TMcolumns').style.display = "none";
+        }
+      }
+
+      function PCVisualization() {
+        var columns = document.getElementsByName("pccolumns")[0].value;
+        var color = document.getElementsByName("pccolorcolumn")[0].value;
+        window.open('http://0.0.0.0:5000/PCVisualization/' + filenum + '/' + columns + '/' + color);
+      }
+
+      function TMVisualization() {
+        var value = document.getElementsByName("TMvaluecolumn")[0].value;
+        var c1 = document.getElementsByName("TMcolumn1")[0].value;
+        var c2 = document.getElementsByName("TMcolumn2")[0].value;
+        var filter = document.getElementsByName("TMcolumnfilter")[0].value;
+        window.open('http://0.0.0.0:5000/TMVisualization/' + filenum + value + '/' + c1 + '/' + c2 + '/' + filter);
+      }
+
+    </script>
+
+  </body>
+
+</html>

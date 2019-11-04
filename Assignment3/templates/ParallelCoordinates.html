@@ -1,0 +1,54 @@
+<!doctype html>
+
+<title>Linking to Data Table</title>
+<script type="text/javascript" src="{{ url_for('static', filename='d3.v3.min.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='d3.parcoords.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='divgrid.js') }}"></script>
+
+<div id="example" class="parcoords"></div>
+<div id="grid"></div>
+
+<script id="brushing">// quantitative colour scale
+var green_to_blue = d3.scale.linear()
+  .domain([9, 50])
+  .range(["#000000", "#FF0000"])
+  .interpolate(d3.interpolateLab);
+
+var color = function(d) { return green_to_blue("{{colors}}"); };
+
+var parcoords = d3.parcoords()("#example")
+  .color(color)
+  .alpha(0.4);
+
+// load csv file and create the chart
+d3.csv("{{ url_for('static', filename= filnam) }}", function(data) {
+  parcoords
+    .data(eval(data))
+    .render()
+    .brushMode("1D-axes");  // enable brushing
+
+  // create data table, row hover highlighting
+  var grid = d3.divgrid();
+  d3.select("#grid")
+    .datum(data.slice(0,50))
+    .call(grid)
+    .selectAll(".row")
+    .on({
+      "mouseover": function(d) { parcoords.highlight([d]) },
+      "mouseout": parcoords.unhighlight
+    });
+
+  // update data table on brush event
+  parcoords.on("brush", function(d) {
+    d3.select("#grid")
+      .datum(d)
+      .call(grid)
+      .selectAll(".row")
+      .on({
+        "mouseover": function(d) { parcoords.highlight([d]) },
+        "mouseout": parcoords.unhighlight
+      });
+  });
+});
+</script>
